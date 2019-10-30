@@ -163,7 +163,10 @@ public class ARManager : MonoBehaviour
             sizeHash.Add(imageSize.id, imageSize);
         }
 
-        
+        Material viewMaterial = new Material(Shader.Find("Standard"));
+        viewMaterial.SetColor("_Color", new Color(1.0f, 0.2f, 0.2f, 0.4f));
+        viewMaterial.SetFloat("_Metallic", 0.875f);
+        viewMaterial.SetFloat("_Glossiness", 0.875f);
         foreach (DataSetTrackableBehaviour target in FindObjectsOfType<DataSetTrackableBehaviour>())
         {
             if(!sizeHash.ContainsKey(target.TrackableName)) 
@@ -184,7 +187,7 @@ public class ARManager : MonoBehaviour
             if (tTrack.prefab == null)
             {
                 GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Plane); //Instantiate(AREffect); 
-                cube.GetComponent<MeshRenderer>().sharedMaterial = Resources.Load<Material>("PlaneMaterial");
+                cube.GetComponent<MeshRenderer>().sharedMaterial = viewMaterial;
                 cube.transform.parent = target.transform;
                 cube.transform.localPosition = Vector3.zero;
                 cube.transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
