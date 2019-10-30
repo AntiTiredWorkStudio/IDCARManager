@@ -113,17 +113,22 @@ public class AssetConfig : ScriptableObject
         string resourcesPath = Application.dataPath + "/Resources/" + armanager.LoadLocalPath;
         List<string> files = new List<string>(from string file in Directory.GetFiles(sourcesPath) where !file.EndsWith(".meta") && (file.EndsWith(".xml") || file.EndsWith(".dat")) select file);
         Dictionary<string, string> targetPath = new Dictionary<string, string>();
+        if (!Directory.Exists(resourcesPath))
+        {
+            Directory.CreateDirectory(resourcesPath);
+        }
         foreach (string file in files)
         {
             string targetFilePath = file.Replace(sourcesPath, "");
             targetFilePath = targetFilePath.Replace(".dat", "_dat.bytes");
             targetFilePath = targetFilePath.Replace(".xml", "_xml.txt");
             targetFilePath = resourcesPath + targetFilePath;
+            
             if (File.Exists(targetFilePath))
             {
                 File.Delete(targetFilePath);
             }
-            File.Copy(file, targetFilePath);
+            File.Copy(file, targetFilePath,true);
             Debug.Log(targetFilePath);
         }
         AssetDatabase.Refresh();
