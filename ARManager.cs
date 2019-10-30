@@ -87,7 +87,7 @@ public class ARManager : MonoBehaviour
 
 
     [Header("Resources中的地址,留空则不从此处加载")]
-    public string LoadLocalPath;
+    public string LoadLocalPath = "DataSet";
     [Header("AR资源配置文件")]
     public AssetConfig ARAssetsConfig;
     public List<ARDataSet> ARDataSets;
