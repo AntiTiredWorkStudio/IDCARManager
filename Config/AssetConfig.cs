@@ -119,6 +119,10 @@ public class AssetConfig : ScriptableObject
             targetFilePath = targetFilePath.Replace(".dat", "_dat.bytes");
             targetFilePath = targetFilePath.Replace(".xml", "_xml.txt");
             targetFilePath = resourcesPath + targetFilePath;
+            if (File.Exists(targetFilePath))
+            {
+                File.Delete(targetFilePath);
+            }
             File.Copy(file, targetFilePath);
             Debug.Log(targetFilePath);
         }
