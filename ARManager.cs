@@ -167,6 +167,13 @@ public class ARManager : MonoBehaviour
         viewMaterial.SetColor("_Color", new Color(1.0f, 0.2f, 0.2f, 0.4f));
         viewMaterial.SetFloat("_Metallic", 0.875f);
         viewMaterial.SetFloat("_Glossiness", 0.875f);
+        viewMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        viewMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        viewMaterial.SetInt("_ZWrite", 0);
+        viewMaterial.DisableKeyword("_ALPHATEST_ON");
+        viewMaterial.EnableKeyword("_ALPHABLEND_ON");
+        viewMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+        viewMaterial.renderQueue = 3000;
         foreach (DataSetTrackableBehaviour target in FindObjectsOfType<DataSetTrackableBehaviour>())
         {
             if(!sizeHash.ContainsKey(target.TrackableName)) 
