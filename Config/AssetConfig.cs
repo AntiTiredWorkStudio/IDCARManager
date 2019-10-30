@@ -27,6 +27,8 @@ public struct TrackTarget
     public Vector3 localOffset;
     public Quaternion localRotation;
     public Vector3 localScale;
+    [Header("ITrackableEventHandler控制器")]
+    public MonoScript ManagerComponent;
 }
 public class AssetConfig : ScriptableObject
 {
@@ -64,7 +66,7 @@ public class AssetConfig : ScriptableObject
         }
     }
     
-    [MenuItem("ARAsset/MakeARCamera")]
+    [MenuItem("IDC AR/ARAsset/1.MakeARCamera")]
     static void MakeARCamera()
     {
         ARManager arManager = GameObject.FindObjectOfType<ARManager>();
@@ -98,7 +100,7 @@ public class AssetConfig : ScriptableObject
         }
     }
 
-    [MenuItem("ARAsset/MakeARResources")]
+    [MenuItem("IDC AR/ARAsset/2.MakeARResources")]
     static void MakeARResources()
     {
         ARManager armanager = GameObject.FindObjectOfType<ARManager>();
@@ -134,12 +136,12 @@ public class AssetConfig : ScriptableObject
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("ARAsset/MakeAssetConfig")]
-    static void AssetInstance()
+    [MenuItem("IDC AR/ARAsset/3.MakeAssetConfig")]
+    static void MakeAssetConfig()
     {
         if(Selection.activeObject == null || Selection.objects.Length == 0)
         {
-            Debug.LogError("请选择Vuforia AR配置xml文件");
+            Debug.LogWarning("请选择Vuforia AR配置xml文件");
         }
 
         List<TextAsset> rightSelection = new List<TextAsset>();
@@ -168,13 +170,19 @@ public class AssetConfig : ScriptableObject
             }
         }
         Selection.objects = rightSelection.ToArray();
+
+        AssetConfig target = ConfigObject;
+
         if (rightSelection.Count == 0)
         {
+            if(target !=null) target.CheckDataSetting();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
             return;
         }
 
         //string assetPath = "Assets/AssetConfig.asset";
-        AssetConfig target = ConfigObject;//AssetDatabase.LoadAssetAtPath(assetPath, typeof(ScriptableObject)) as AssetConfig;
+        //AssetDatabase.LoadAssetAtPath(assetPath, typeof(ScriptableObject)) as AssetConfig;
         if (target != null)
         {
             Debug.LogWarning("已存在AssetConfig文件");
@@ -204,7 +212,7 @@ public class AssetConfig : ScriptableObject
             return editTarget.gameObject;
         }
     }
-    [MenuItem("ARAsset/Open ARAssetsEditor")]
+    [MenuItem("IDC AR/ARAsset/4.Open ARAssetsEditor")]
     public static void EditARAssetsAdapte()
     {
         if(ConfigObject == null)
@@ -295,6 +303,32 @@ public class AssetConfig : ScriptableObject
         }
         return false;
     }
+    /// <summary>
+    /// 检查设置
+    /// </summary>
+    public void CheckDataSetting()
+    {
+        bool result = false;
+        ARManager sceneARManager = GameObject.FindObjectOfType<ARManager>();
+        if (sceneARManager != null) { sceneARManager.ARAssetsConfig = ConfigObject;result = true; }
+        for (int i = 0; i < TrackAssets.Count; i++)
+        {
+            for (int j = 0; j < TrackAssets[i].targetObjects.Count; j++)
+            {
+                if (TrackAssets[i].targetObjects[j].ManagerComponent == null)
+                {
+                    TrackTarget trackObject =
+                    TrackAssets[i].targetObjects[j];
+                    trackObject.ManagerComponent = AssetDatabase.LoadAssetAtPath<MonoScript>("Assets/Vuforia/Scripts/DefaultTrackableEventHandler.cs");
+                   // Debug.Log(trackObject.ManagerComponent.name);
+                    TrackAssets[i].targetObjects[j] = trackObject;
+                    result = true;
+                }
+            }
+        }
+
+        if (result) { Debug.LogWarning("配置文件设置已更新!"); }
+    }
 
     public void UpdateDataSetting(TextAsset targetXml)
     {
@@ -302,7 +336,7 @@ public class AssetConfig : ScriptableObject
 
         List<DataSetting> dTarget =new List<DataSetting>(
             (from DataSetting dt in TrackAssets where dt.xmlName == targetXml.name select dt));
-        if (dTarget.Count == 0)
+        if (dTarget.Count == 0)//不存在DataSet
         {
             DataSetting tData = new DataSetting();
             tData.targetObjects = new List<TrackTarget>();
@@ -315,11 +349,12 @@ public class AssetConfig : ScriptableObject
                 tTarget.width = imageSize.size.x;
                 tTarget.height = imageSize.size.y;
                 tTarget.localScale = new Vector3(1.0f,1.0f,  imageSize.size.y/ imageSize.size.x );
+                tTarget.ManagerComponent = AssetDatabase.LoadAssetAtPath<MonoScript>("Assets/Vuforia/Scripts/DefaultTrackableEventHandler.cs");
                 tData.targetObjects.Add(tTarget);
             }
             TrackAssets.Add(tData);
         }
-        else
+        else//存在DataSet
         {
             DataSetting dataSetting = dTarget[0];
             foreach (ImageSize imageSize in list)
@@ -354,6 +389,7 @@ public class AssetConfig : ScriptableObject
             tTarget.width = imageSize.size.x;
             tTarget.height = imageSize.size.y;
             tTarget.localScale = new Vector3(1.0f, 1.0f, imageSize.size.x/ imageSize.size.y);
+            tTarget.ManagerComponent = AssetDatabase.LoadAssetAtPath<MonoScript>("Assets/Vuforia/Scripts/DefaultTrackableEventHandler.cs");
             tData.targetObjects.Add(tTarget);
         }
         if(TrackAssets == null)

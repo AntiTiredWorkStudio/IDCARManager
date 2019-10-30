@@ -208,7 +208,7 @@ public class ARManager : MonoBehaviour
                 prefab.transform.localPosition = tTrack.localOffset*0.1f;
                 prefab.transform.rotation =   Quaternion.Euler(new Vector3(180.0f,0.0f,180.0f)+ tTrack.localRotation.eulerAngles);
                 prefab.transform.localScale = 0.1f *(new Vector3(tTrack.localScale.x, tTrack.localScale.y, tTrack.localScale.x));
-                target.gameObject.AddComponent<DefaultTrackableEventHandler>();
+                target.gameObject.AddComponent(tTrack.ManagerComponent.GetClass());
             }
         }
     }
