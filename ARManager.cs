@@ -199,7 +199,14 @@ public class ARManager : MonoBehaviour
                 cube.transform.localPosition = Vector3.zero;
                 cube.transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
                 cube.transform.localScale = 0.1f * (new Vector3(1.0f, 1.0f, 1.0f * (sizeHash[target.TrackableName].size.y / sizeHash[target.TrackableName].size.x)));
-                target.gameObject.AddComponent<DefaultTrackableEventHandler>();
+                if (tTrack.ManagerComponent != null)
+                {
+                    target.gameObject.AddComponent(tTrack.ManagerComponent.GetClass());
+                }
+                else
+                {
+                    target.gameObject.AddComponent<DefaultTrackableEventHandler>();
+                }
             }
             else
             {
@@ -207,8 +214,15 @@ public class ARManager : MonoBehaviour
                 prefab.transform.parent = target.transform;
                 prefab.transform.localPosition = tTrack.localOffset*0.1f;
                 prefab.transform.rotation =   Quaternion.Euler(new Vector3(180.0f,0.0f,180.0f)+ tTrack.localRotation.eulerAngles);
-                prefab.transform.localScale = 0.1f *(new Vector3(tTrack.localScale.x, tTrack.localScale.y, tTrack.localScale.x));
-                target.gameObject.AddComponent(tTrack.ManagerComponent.GetClass());
+                prefab.transform.localScale = 0.1f * (new Vector3(tTrack.localScale.x, tTrack.localScale.y, tTrack.localScale.x));
+                if (tTrack.ManagerComponent != null)
+                {
+                    target.gameObject.AddComponent(tTrack.ManagerComponent.GetClass());
+                }
+                else
+                {
+                    target.gameObject.AddComponent<DefaultTrackableEventHandler>();
+                }
             }
         }
     }
