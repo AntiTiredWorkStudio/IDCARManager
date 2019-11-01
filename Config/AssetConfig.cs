@@ -28,7 +28,7 @@ public struct TrackTarget
     public Quaternion localRotation;
     public Vector3 localScale;
     [Header("ITrackableEventHandler控制器")]
-    public MonoScript ManagerComponent;
+    public string ManagerComponent;
 }
 public class AssetConfig : ScriptableObject
 {
@@ -315,12 +315,13 @@ public class AssetConfig : ScriptableObject
         {
             for (int j = 0; j < TrackAssets[i].targetObjects.Count; j++)
             {
-                if (TrackAssets[i].targetObjects[j].ManagerComponent == null)
+                if (TrackAssets[i].targetObjects[j].ManagerComponent == "")
                 {
                     TrackTarget trackObject =
                     TrackAssets[i].targetObjects[j];
-                    trackObject.ManagerComponent = AssetDatabase.LoadAssetAtPath<MonoScript>("Assets/Vuforia/Scripts/DefaultTrackableEventHandler.cs");
-                   // Debug.Log(trackObject.ManagerComponent.name);
+                    trackObject.ManagerComponent = AssetDatabase.LoadAssetAtPath<MonoScript>("Assets/Vuforia/Scripts/DefaultTrackableEventHandler.cs").GetClass().Name;
+                    //Debug.LogWarning(AssetDatabase.LoadAssetAtPath<MonoScript>("Assets/Vuforia/Scripts/DefaultTrackableEventHandler.cs").GetClass().Name);
+                    // Debug.Log(trackObject.ManagerComponent.name);
                     TrackAssets[i].targetObjects[j] = trackObject;
                     result = true;
                 }
@@ -349,7 +350,7 @@ public class AssetConfig : ScriptableObject
                 tTarget.width = imageSize.size.x;
                 tTarget.height = imageSize.size.y;
                 tTarget.localScale = new Vector3(1.0f,1.0f,  imageSize.size.y/ imageSize.size.x );
-                tTarget.ManagerComponent = AssetDatabase.LoadAssetAtPath<MonoScript>("Assets/Vuforia/Scripts/DefaultTrackableEventHandler.cs");
+                tTarget.ManagerComponent = AssetDatabase.LoadAssetAtPath<MonoScript>("Assets/Vuforia/Scripts/DefaultTrackableEventHandler.cs").name;
                 tData.targetObjects.Add(tTarget);
             }
             TrackAssets.Add(tData);
@@ -389,7 +390,7 @@ public class AssetConfig : ScriptableObject
             tTarget.width = imageSize.size.x;
             tTarget.height = imageSize.size.y;
             tTarget.localScale = new Vector3(1.0f, 1.0f, imageSize.size.x/ imageSize.size.y);
-            tTarget.ManagerComponent = AssetDatabase.LoadAssetAtPath<MonoScript>("Assets/Vuforia/Scripts/DefaultTrackableEventHandler.cs");
+            tTarget.ManagerComponent = AssetDatabase.LoadAssetAtPath<MonoScript>("Assets/Vuforia/Scripts/DefaultTrackableEventHandler.cs").name;
             tData.targetObjects.Add(tTarget);
         }
         if(TrackAssets == null)

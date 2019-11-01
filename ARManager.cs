@@ -187,9 +187,10 @@ public class ARManager : MonoBehaviour
 
             target.gameObject.name = target.TrackableName;
 
-
+            /*需要修改！！！*/
             DataSetting tData = new List<DataSetting>(from DataSetting sData in ARAssetsConfig.TrackAssets where sData.xmlName.StartsWith(arset.id) select sData)[0];
             TrackTarget tTrack = new List<TrackTarget>(from TrackTarget sTrack in tData.targetObjects where sTrack.id == target.TrackableName select sTrack)[0];
+            /*需要修改！！！*/
 
             if (tTrack.prefab == null)
             {
@@ -201,7 +202,7 @@ public class ARManager : MonoBehaviour
                 cube.transform.localScale = 0.1f * (new Vector3(1.0f, 1.0f, 1.0f * (sizeHash[target.TrackableName].size.y / sizeHash[target.TrackableName].size.x)));
                 if (tTrack.ManagerComponent != null)
                 {
-                    target.gameObject.AddComponent(tTrack.ManagerComponent.GetClass());
+                    target.gameObject.AddComponent(System.Type.GetType(tTrack.ManagerComponent));
                 }
                 else
                 {
@@ -217,7 +218,7 @@ public class ARManager : MonoBehaviour
                 prefab.transform.localScale = 0.1f * (new Vector3(tTrack.localScale.x, tTrack.localScale.y, tTrack.localScale.x));
                 if (tTrack.ManagerComponent != null)
                 {
-                    target.gameObject.AddComponent(tTrack.ManagerComponent.GetClass());
+                    target.gameObject.AddComponent(System.Type.GetType(tTrack.ManagerComponent));
                 }
                 else
                 {
